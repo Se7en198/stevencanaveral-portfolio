@@ -1166,54 +1166,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-/* ─── LAZY FIRST-FRAME ───────────────────────────────── */
-let _frameLoading = 0;
-const _frameQueue  = [];
-function _frameNext() {
-  if (_frameLoading >= 2 || !_frameQueue.length) return;
-  const run = _frameQueue.shift();
-  _frameLoading++;
-  run();
-}
-
-const frameObs = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (!e.isIntersecting) return;
-    const card = e.target;
-    frameObs.unobserve(card);
-    const video = card.querySelector('video');
-    if (!video || video.getAttribute('preload') !== 'none') return;
-    _frameQueue.push(() => {
-      const seekTo = parseFloat(card.dataset.seek) || 0.001;
-      video.preload = 'metadata';
-      video.load();
-      const onData = () => {
-        video.removeEventListener('loadeddata', onData);
-        video.removeEventListener('error', onError);
-        video.currentTime = seekTo;
-        const onSeeked = () => {
-          video.removeEventListener('seeked', onSeeked);
-          card.classList.add('has-frame');
-          video.pause();
-          _frameLoading--;
-          _frameNext();
-        };
-        video.addEventListener('seeked', onSeeked);
-      };
-      const onError = () => {
-        video.removeEventListener('loadeddata', onData);
-        video.removeEventListener('error', onError);
-        _frameLoading--;
-        _frameNext();
-      };
-      video.addEventListener('loadeddata', onData);
-      video.addEventListener('error', onError);
-    });
-    _frameNext();
-  });
-}, { rootMargin: '50px 0px' });
-
-document.querySelectorAll('.scard').forEach(c => frameObs.observe(c));
+/* ─── POSTER INSTANT SHOW ────────────────────────────── */
+/* Poster images are embedded directly in <video poster="...">.
+   Mark cards as has-frame immediately so the loading overlay hides. */
+document.querySelectorAll('.scard').forEach(c => {
+  const v = c.querySelector('video[poster]');
+  if (v) c.classList.add('has-frame');
+});
 
 /* ─── BLINK ──────────────────────────────────────────── */
 const blinkObs = new IntersectionObserver(entries => {
