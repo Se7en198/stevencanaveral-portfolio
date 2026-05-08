@@ -1,6 +1,9 @@
 export default async (request, context) => {
   const ua = request.headers.get('user-agent') || '';
+  const agentCategory = request.headers.get('netlify-agent-category') || '';
+
   const isSocialBot =
+    agentCategory === 'social' ||
     ua.includes('facebookexternalhit') ||
     ua.includes('Facebot') ||
     ua.includes('Twitterbot') ||
@@ -34,8 +37,11 @@ export default async (request, context) => {
 
   return new Response(html, {
     status: 200,
-    headers: { 'Content-Type': 'text/html; charset=utf-8' },
+    headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-store',
+    },
   });
 };
 
-export const config = { path: '/' };
+export const config = { path: '/', cache: 'manual' };

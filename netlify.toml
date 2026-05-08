@@ -1,6 +1,7 @@
 [[edge_functions]]
   function = "social-og"
   path = "/"
+  cache = "manual"
 
 [[headers]]
   for = "/*.mp4"
