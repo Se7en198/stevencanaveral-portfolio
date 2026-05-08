@@ -1,0 +1,17 @@
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ZIP de deploy
+*.zip
+
+# Carpeta interna de Claude
+.claude/
+
+# Carpetas que no van al sitio
+Ajustes diseño web/
+Moda/Xuss/
+
+# Imágenes originales de trabajo (muy pesadas, no se usan en la web)
+Moda/ilusion/magnifics_upscale-*.png

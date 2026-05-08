@@ -1,0 +1,1340 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Steven Cañaveral — Creatividad + IA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { overflow-x: clip; }
+
+    :root {
+      --bg:          #050505;
+      --surface:     #0c0c0c;
+      --border:      #1c1c1c;
+      --accent:      #C8A46B;
+      --text:        #F5F5F2;
+      --muted:       #555555;
+      --sub:         #777777;
+      --pad:         clamp(24px, 5vw, 80px);
+      --radius-sm:   4px;
+      --radius-pill: 100px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ──────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 20px var(--pad);
+      display: flex; justify-content: space-between; align-items: center;
+      transition: background .35s, border-color .35s;
+      border-bottom: 1px solid transparent;
+    }
+    nav.scrolled {
+      background: rgba(5,5,5,.94);
+      border-color: var(--border);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 17px; letter-spacing: .14em;
+      color: var(--text); text-decoration: none;
+    }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-link {
+      font-size: 11px; font-weight: 400; letter-spacing: .08em; text-transform: uppercase;
+      color: rgba(245,245,242,.48); text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-link:hover { color: var(--text); }
+    .nav-cta {
+      font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--text); text-decoration: none;
+      border: 1px solid rgba(245,245,242,.22);
+      padding: 9px 20px;
+      display: flex; align-items: center; gap: 8px;
+      transition: border-color .25s, color .25s;
+    }
+    .nav-cta::after { content: '→'; font-size: 12px; }
+    .nav-cta:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── HERO ─────────────────────────────────────────── */
+    .hero {
+      height: 100vh; min-height: 600px;
+      position: relative;
+      display: flex; align-items: flex-end;
+      overflow: hidden;
+    }
+
+    /* video full-screen background */
+    #reel-vid {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      z-index: 0;
+      transition: opacity .4s ease;
+    }
+
+    /* gradient overlay: oscuro arriba y muy oscuro abajo para legibilidad */
+    .hero-overlay {
+      position: absolute; inset: 0; z-index: 1;
+      background:
+        linear-gradient(to top,
+          rgba(5,5,5,1)   0%,
+          rgba(5,5,5,.75) 30%,
+          rgba(5,5,5,.25) 65%,
+          rgba(5,5,5,.5)  100%);
+    }
+
+    /* reel progress bar */
+    .reel-bar {
+      position: absolute; bottom: 0; left: 0;
+      height: 2px; background: var(--accent);
+      width: 0%; transition: none; z-index: 10;
+    }
+
+    /* content */
+    .hero-content {
+      position: relative; z-index: 2;
+      padding: 0 var(--pad) clamp(48px, 8vh, 88px);
+      width: 100%;
+    }
+    .hero-eyebrow {
+      font-size: 10px; font-weight: 400; letter-spacing: .2em; text-transform: uppercase;
+      color: rgba(245,245,242,.45);
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 20px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block; width: 28px; height: 1px;
+      background: var(--accent); flex-shrink: 0;
+    }
+    .hero-headline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(76px, 13vw, 200px);
+      font-weight: 400; line-height: .88; letter-spacing: .02em;
+      color: var(--text);
+      margin-bottom: 32px;
+    }
+    .hero-headline .ia { color: var(--accent); }
+    .hero-meta {
+      font-size: 12px; color: rgba(245,245,242,.4);
+      letter-spacing: .06em; margin-bottom: 40px;
+    }
+    .hero-cta-btn {
+      display: inline-flex; align-items: center; gap: 14px;
+      font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--text); text-decoration: none;
+      border: 1px solid rgba(245,245,242,.28);
+      padding: 14px 28px;
+      transition: border-color .25s, color .25s, gap .3s;
+    }
+    .hero-cta-btn span { font-size: 13px; }
+    .hero-cta-btn:hover { border-color: var(--accent); color: var(--accent); gap: 20px; }
+
+    /* ── PHRASE SECTION ───────────────────────────────── */
+    .phrase-section {
+      padding: clamp(80px, 10vw, 140px) var(--pad);
+    }
+    .phrase-label {
+      font-size: 10px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--accent);
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: clamp(40px, 6vw, 72px);
+    }
+    .phrase-label::after {
+      content: '';
+      flex: 1; height: 1px; background: var(--border);
+    }
+    .big-phrase {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(38px, 6.5vw, 100px);
+      font-weight: 400; line-height: 1.0; letter-spacing: .02em;
+      color: var(--text);
+      margin-bottom: 36px;
+    }
+    .big-phrase em { font-style: normal; color: var(--accent); }
+    .sec-name em   { font-style: normal; color: var(--accent); }
+    .phrase-desc {
+      font-size: clamp(12px, 1.1vw, 14px);
+      color: var(--sub); line-height: 2;
+      max-width: 480px;
+      letter-spacing: .02em;
+    }
+
+    /* ── SECTION HEADER ──────────────────────────────── */
+    .sec-head {
+      padding: clamp(72px, 10vw, 130px) var(--pad) clamp(32px, 4vw, 52px);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      column-gap: 14px;
+      row-gap: 0;
+      border-top: 1px solid var(--border);
+    }
+    .sec-num {
+      font-size: 10px; font-weight: 600; letter-spacing: .2em;
+      color: var(--accent); flex-shrink: 0;
+    }
+    .sec-dash {
+      flex: 0 0 28px; height: 1px;
+      background: var(--border);
+      align-self: center; flex-shrink: 0;
+    }
+    /* título grande — salta a nueva línea */
+    .sec-name {
+      flex-basis: 100%;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(56px, 9vw, 140px);
+      font-weight: 400; letter-spacing: .02em; line-height: .88;
+      color: var(--text);
+      margin-top: 12px;
+    }
+    .sec-desc {
+      flex-basis: 100%;
+      font-size: clamp(12px, 1.1vw, 14px);
+      color: var(--sub); line-height: 1.75;
+      max-width: 520px;
+      margin-top: 16px;
+      padding-left: 0;
+    }
+
+    /* ── CAT SECTION ──────────────────────────────────── */
+    .cat-section { padding-bottom: clamp(60px, 8vw, 100px); }
+
+    /* ── STRIP ────────────────────────────────────────── */
+    .strip-wrap { padding-bottom: 4px; isolation: isolate; }
+    .strip {
+      display: flex;
+      gap: clamp(3px, 0.4vw, 6px);
+      padding: 0 var(--pad);
+    }
+
+    /* ── CARD ─────────────────────────────────────────── */
+    .scard {
+      flex: 1; min-width: 120px;
+      position: relative; overflow: hidden;
+      cursor: pointer;
+      background: var(--surface);
+      aspect-ratio: 16 / 9;
+    }
+    .scard.portrait { aspect-ratio: 9 / 16; min-width: 100px; }
+    .scard.square   { aspect-ratio: 1 / 1;  min-width: 120px; }
+    .scard.contain img { object-fit: contain; background: #050505; }
+
+    .scard video, .scard img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      z-index: 1;
+      transition: transform .7s cubic-bezier(.25,.46,.45,.94);
+    }
+    .scard:hover video, .scard:hover img { transform: scale(1.04); }
+
+    .scard-poster {
+      position: absolute; inset: 0;
+      background: #080808;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 10px;
+      transition: opacity .4s ease;
+    }
+    .scard.has-frame .scard-poster { opacity: 0; pointer-events: none; }
+
+    .poster-title {
+      font-size: clamp(9px, 1vw, 13px); font-weight: 400;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: rgba(245,245,242,.16); text-align: center; padding: 0 12px;
+    }
+    .poster-dots { display: flex; gap: 5px; }
+    .poster-dots span {
+      width: 3px; height: 3px; border-radius: 50%;
+      background: var(--accent); opacity: .3;
+      animation: blink 1.6s ease-in-out infinite;
+      animation-play-state: paused;
+    }
+    .poster-dots span:nth-child(2) { animation-delay: .2s; }
+    .poster-dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes blink { 0%,100%{opacity:.12} 50%{opacity:.65} }
+    .scard.in-view .poster-dots span { animation-play-state: running; }
+
+    .scard-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top,
+        rgba(0,0,0,.9) 0%, rgba(0,0,0,.22) 42%, transparent 100%);
+      display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 14px 16px;
+      z-index: 2; opacity: 0;
+      transition: opacity .3s;
+    }
+    .scard:hover .scard-overlay { opacity: 1; }
+    .scard-tag {
+      font-size: 9px; font-weight: 600;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 4px;
+    }
+    .scard-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(13px, 1.4vw, 20px);
+      letter-spacing: .04em; line-height: 1.1;
+      color: var(--text);
+    }
+
+    .scard-play {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(245,245,242,.08);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(245,245,242,.18);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 3; opacity: 0;
+      transition: opacity .3s, transform .3s, background .3s;
+      pointer-events: none;
+    }
+    .scard:hover .scard-play {
+      opacity: 1; transform: translate(-50%,-50%) scale(1.08);
+      background: rgba(200,164,107,.38); border-color: rgba(200,164,107,.5);
+    }
+    .scard-play svg { width: 14px; height: 14px; fill: #fff; margin-left: 2px; }
+    .scard.no-video .scard-play { display: none; }
+
+    /* ── DIVIDER ──────────────────────────────────────── */
+    .divider {
+      width: 1px; height: clamp(55px, 7vw, 90px);
+      background: linear-gradient(to bottom, transparent, rgba(200,164,107,.2), transparent);
+      margin: 0 auto;
+    }
+
+    /* ── CTA ──────────────────────────────────────────── */
+    .cta-section {
+      padding: clamp(90px, 12vw, 160px) var(--pad);
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 48px 60px;
+      align-items: center;
+    }
+    .cta-eyebrow {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: .2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 22px;
+    }
+    .cta-headline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 7.5vw, 120px);
+      font-weight: 400; line-height: .88; letter-spacing: .02em;
+    }
+    .cta-headline em { font-style: normal; color: var(--accent); }
+    .btn-wa {
+      display: inline-flex; align-items: center; gap: 12px;
+      font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid rgba(245,245,242,.22);
+      padding: 16px 28px;
+      white-space: nowrap;
+      transition: border-color .25s, color .25s, gap .3s;
+    }
+    .btn-wa:hover { border-color: var(--accent); color: var(--accent); gap: 18px; }
+    .btn-wa svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+
+    /* ── FOOTER ───────────────────────────────────────── */
+    footer {
+      padding: 36px var(--pad);
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 20px;
+    }
+    .footer-left {}
+    .footer-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 13px; letter-spacing: .14em;
+      color: var(--text); margin-bottom: 4px;
+    }
+    .footer-role {
+      font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .footer-copy { font-size: 10px; letter-spacing: .05em; color: var(--muted); }
+    .footer-social { display: flex; align-items: center; gap: 16px; }
+    .footer-social a {
+      color: var(--muted); text-decoration: none;
+      transition: color .2s;
+      display: flex; align-items: center;
+    }
+    .footer-social a:hover { color: var(--text); }
+    .footer-social svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── MODAL ────────────────────────────────────────── */
+    .modal {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,.97);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .3s;
+    }
+    .modal.active { opacity: 1; pointer-events: auto; }
+    .modal-inner { position: relative; max-width: 960px; width: 92%; }
+    .modal-close {
+      position: absolute; top: -44px; right: 0;
+      background: none; border: none; color: var(--sub);
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase;
+      cursor: pointer; display: flex; align-items: center; gap: 6px;
+      transition: color .2s;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-video, .modal-img {
+      width: auto; max-width: 100%; max-height: 82vh;
+      display: block; background: #000; margin: 0 auto;
+    }
+    .modal-img { object-fit: contain; display: none; }
+    .modal.img-mode .modal-video { display: none; }
+    .modal.img-mode .modal-img   { display: block; }
+
+    /* ── SCROLL ANIMATIONS ────────────────────────────── */
+    .phrase-section .phrase-label,
+    .phrase-section .big-phrase,
+    .phrase-section .phrase-desc,
+    .sec-head,
+    .cta-section,
+    .scard {
+      opacity: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .phrase-section .phrase-label,
+      .phrase-section .big-phrase,
+      .phrase-section .phrase-desc,
+      .sec-head, .cta-section, .scard {
+        opacity: 1 !important; transform: none !important;
+      }
+    }
+    .gsap-failed .phrase-section .phrase-label,
+    .gsap-failed .phrase-section .big-phrase,
+    .gsap-failed .phrase-section .phrase-desc,
+    .gsap-failed .sec-head,
+    .gsap-failed .cta-section,
+    .gsap-failed .scard {
+      opacity: 1 !important; transform: none !important;
+    }
+
+    /* ── FOCUS ────────────────────────────────────────── */
+    .scard:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .modal-close:focus-visible, .nav-link:focus-visible,
+    .nav-cta:focus-visible, .btn-wa:focus-visible,
+    .hero-cta-btn:focus-visible {
+      outline: 2px solid var(--accent); outline-offset: 3px;
+    }
+
+    /* ── VISUALLY HIDDEN ──────────────────────────────── */
+    .visually-hidden {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    /* ── RESPONSIVE ───────────────────────────────────── */
+
+    @media (max-width: 900px) {
+      .scard.portrait { min-width: 140px; }
+      .cta-section {
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-link { display: none; }
+      footer { flex-direction: column; gap: 16px; text-align: center; }
+
+      .strip {
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+        padding-bottom: 8px;
+        scrollbar-width: none;
+      }
+      .strip::-webkit-scrollbar { display: none; }
+      .scard          { flex: 0 0 auto; scroll-snap-align: start; width: 68vw; min-width: unset; }
+      .scard.portrait { flex: 0 0 auto; scroll-snap-align: start; width: 42vw; min-width: unset; }
+      .scard.square   { flex: 0 0 auto; scroll-snap-align: start; width: 58vw; min-width: unset; }
+
+      .sec-desc { padding-left: 0; }
+    }
+
+    @media (max-width: 600px) {
+      .nav-logo { font-size: 14px; }
+      .nav-cta  { padding: 8px 14px; font-size: 10px; }
+      .nav-cta::after { display: none; }
+
+      .hero-headline { font-size: clamp(64px, 17vw, 100px); }
+
+      .big-phrase { font-size: clamp(34px, 9.5vw, 58px); }
+      .phrase-desc { font-size: 12px; }
+
+      .cta-headline { font-size: clamp(44px, 12vw, 80px); }
+      .cta-section  { padding: 64px var(--pad); }
+
+      .scard          { width: 80vw; }
+      .scard.portrait { width: 52vw; }
+      .scard.square   { width: 72vw; }
+
+      .modal-inner  { width: 96%; }
+      .modal-close  { top: -34px; font-size: 10px; }
+      .modal-video, .modal-img { max-height: 58vh; }
+    }
+
+    @media (hover: none) {
+      .scard-overlay { opacity: 1; }
+      .scard-play    { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<h1 class="visually-hidden">Steven Cañaveral — Creatividad + IA · AI Creative Director</h1>
+
+<!-- NAV -->
+<nav aria-label="Navegación principal">
+  <a href="#" class="nav-logo">Steven Cañaveral</a>
+  <div class="nav-links">
+    <a href="#trabajo" class="nav-link">Trabajo</a>
+    <a href="https://wa.me/573105050339" target="_blank" rel="noopener" class="nav-cta">Hablemos</a>
+  </div>
+</nav>
+
+<!-- ── HERO ───────────────────────────────────────────── -->
+<section class="hero">
+  <video id="reel-vid" muted playsinline preload="none"></video>
+  <div class="reel-bar" id="reel-bar"></div>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">AI Creative Director · Bogotá, Colombia</p>
+    <h2 class="hero-headline">
+      CREATIVIDAD<br><span class="ia">+ IA</span>
+    </h2>
+    <a href="#trabajo" class="hero-cta-btn">Ver Trabajo <span>→</span></a>
+  </div>
+</section>
+
+<!-- ── PHRASE ──────────────────────────────────────────── -->
+<section class="phrase-section">
+  <p class="phrase-label">01</p>
+  <p class="big-phrase">
+    ¿Ya sabes qué puedes hacer<br>con <em>IA</em> en tu agencia?
+  </p>
+  <p class="phrase-desc">
+    Flujos que aceleran la producción · Creatividad sin topes · Hooks que aumentan el engagement · Moda sin equipo de producción · Nuevos negocios
+  </p>
+</section>
+
+<!-- ── 02 · PRODUCCIÓN IA ─────────────────────────────── -->
+<section class="cat-section" id="trabajo">
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <span class="sec-dash"></span>
+    <span class="sec-name">Producción <em>IA</em></span>
+    <p class="sec-desc">Acelera la producción de piezas. Si ya tienes el key visual, automatiza las bajadas.</p>
+  </div>
+  <div class="strip-wrap">
+    <div class="strip">
+
+      <div class="scard" tabindex="0" role="button" aria-label="Ver video: Mabe — Automatización IA" data-video="produccion-ia/mabe/mabe.mp4">
+        <div class="scard-poster">
+          <p class="poster-title">Mabe</p>
+          <div class="poster-dots"><span></span><span></span><span></span></div>
+        </div>
+        <video muted loop playsinline preload="none">
+          <source src="produccion-ia/mabe/mabe.mp4" type="video/mp4">
+        </video>
+        <div class="scard-overlay">
+          <span class="scard-tag">Mabe · Automatización IA</span>
+          <p class="scard-name">Mabe</p>
+        </div>
+        <div class="scard-play" aria-label="Ver video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+
+      <div class="scard" tabindex="0" role="button" aria-label="Ver video: Nu Bank — Automatización IA" data-video="produccion-ia/nu-bank/nu-bank.mp4">
+        <div class="scard-poster">
+          <p class="poster-title">Nu Bank</p>
+          <div class="poster-dots"><span></span><span></span><span></span></div>
+        </div>
+        <video muted loop playsinline preload="none">
+          <source src="produccion-ia/nu-bank/nu-bank.mp4" type="video/mp4">
+        </video>
+        <div class="scard-overlay">
+          <span class="scard-tag">Nu Bank · Automatización IA</span>
+          <p class="scard-name">Nu Bank</p>
+        </div>
+        <div class="scard-play" aria-label="Ver video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+
+      <div class="scard" tabindex="0" role="button" aria-label="Ver video: Ara — Automatización IA" data-video="produccion-ia/ara/ara.mp4">
+        <div class="scard-poster">
+          <p class="poster-title">Ara</p>
+          <div class="poster-dots"><span></span><span></span><span></span></div>
+        </div>
+        <video muted loop playsinline preload="none">
+          <source src="produccion-ia/ara/ara.mp4" type="video/mp4">
+        </video>
+        <div class="scard-overlay">
+          <span class="scard-tag">Ara · Automatización IA</span>
+          <p class="scard-name">Ara</p>
+        </div>
+        <div class="scard-play" aria-label="Ver video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── 03 · ADS 100% IA ───────────────────────────────── -->
+<section class="cat-section">
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <span class="sec-dash"></span>
+    <span class="sec-name">Ads 100% <em>IA</em></span>
+    <p class="sec-desc">El Ad que te sueñas ya lo puedes crear, sin límites de producción.</p>
+  </div>
+  <div class="strip-wrap">
+    <div class="strip">
+
+      <div class="scard" tabindex="0" role="button" aria-label="Ver video: Corferias — Belleza y Salud" data-video="ads/corferias/corferias.mp4">
+        <div class="scard-poster">
+          <p class="poster-title">Corferias<br>Belleza y Salud</p>
+          <div class="poster-dots"><span></span><span></span><span></span></div>
+        </div>
+        <video muted loop playsinline preload="none">
+          <source src="ads/corferias/corferias.mp4" type="video/mp4">
+        </video>
+        <div class="scard-overlay">
+          <span class="scard-tag">Corferias · Salud y Belleza</span>
+          <p class="scard-name">Corferias — Belleza y Salud</p>
+        </div>
+        <div class="scard-play" aria-label="Ver video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+
+      <div class="scard" tabindex="0" role="button" aria-label="Ver video: Ilusión — Moda IA" data-video="ads/ilusion-ad/ilusion.mp4">
+        <div class="scard-poster">
+          <p class="poster-title">Ilusión</p>
+          <div class="poster-dots"><span></span><span></span><span></span></div>
+        </div>
+        <video muted loop playsinline preload="none" title="Ilusión — Moda IA">
+          <source src="ads/ilusion-ad/ilusion.mp4" type="video/mp4">
+        </video>
+        <div class="scard-overlay">
+          <span class="scard-tag">Ilusión · Moda</span>
+          <p class="scard-name">Ilusión</p>
+        </div>
+        <div class="scard-play" aria-label="Ver video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+
+      <div class="scard" tabindex="0" role="button" aria-label="Ver video: Jeep — AI Commercial" data-video="ads/jeep/jeep.mp4">
+        <div class="scard-poster">
+          <p class="poster-title">Jeep</p>
+          <div class="poster-dots"><span></span><span></span><span></span></div>
+        </div>
+        <video muted loop playsinline preload="none">
+          <source src="ads/jeep/jeep.mp4" type="video/mp4">
+        </video>
+        <div class="scard-overlay">
+          <span class="scard-tag">Jeep</span>
+          <p class="scard-name">Jeep — AI Commercial</p>
+        </div>
+        <div class="scard-play" aria-label="Ver video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── 04 · IA CONTENT ────────────────────────────────── -->
+<section class="cat-section">
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <span class="sec-dash"></span>
+    <span class="sec-name"><em>IA</em> Content</span>
+    <p class="sec-desc">Influencers UGC, contenido de alto impacto y retención. Imagínate lo que quieras y créalo.</p>
+  </div>
+  <div class="strip-wrap">
+    <div class="strip">
+
+      <div class="scard portrait" tabindex="0" role="button" aria-label="Ver video: Tiburón" data-video="rrss/tiburon.mp4">
+        <div class="scard-poster">
+          <p class="poster-title">Tiburón</p>
+          <div class="poster-dots"><span></span><span></span><span></span></div>
+        </div>
+        <video muted loop playsinline preload="none">
+          <source src="rrss/tiburon.mp4" type="video/mp4">
+        </video>
+        <div class="scard-overlay">
+          <span class="scard-tag">LG</span>
+          <p class="scard-name">Tiburón</p>
+        </div>
+        <div class="scard-play" aria-label="Ver video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+
+      <div class="scard portrait" tabindex="0" role="button" aria-label="Ver video: Flores" data-video="rrss/flores.mp4">
+        <div class="scard-poster">
+          <p class="poster-title">Flores</p>
+          <div class="poster-dots"><span></span><span></span><span></span></div>
+        </div>
+        <video muted loop playsinline preload="none">
+          <source src="rrss/flores.mp4" type="video/mp4">
+        </video>
+        <div class="scard-overlay">
+          <span class="scard-tag">Corferias</span>
+          <p class="scard-name">Flores</p>
+        </div>
+        <div class="scard-play" aria-label="Ver video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+
+      <div class="scard portrait" tabindex="0" role="button" aria-label="Ver video: Faceless Content" data-video="rrss/faceless.mp4">
+        <div class="scard-poster">
+          <p class="poster-title">Faceless</p>
+          <div class="poster-dots"><span></span><span></span><span></span></div>
+        </div>
+        <video muted loop playsinline preload="none">
+          <source src="rrss/faceless.mp4" type="video/mp4">
+        </video>
+        <div class="scard-overlay">
+          <span class="scard-tag">B2B</span>
+          <p class="scard-name">Faceless Content</p>
+        </div>
+        <div class="scard-play" aria-label="Ver video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+
+      <div class="scard portrait" tabindex="0" role="button" aria-label="Ver video: LaHaus" data-video="rrss/lahaus.mp4" data-seek="4">
+        <div class="scard-poster">
+          <p class="poster-title">LaHaus</p>
+          <div class="poster-dots"><span></span><span></span><span></span></div>
+        </div>
+        <video muted loop playsinline preload="none">
+          <source src="rrss/lahaus.mp4" type="video/mp4">
+        </video>
+        <div class="scard-overlay">
+          <span class="scard-tag">LaHaus</span>
+          <p class="scard-name">LaHaus</p>
+        </div>
+        <div class="scard-play" aria-label="Ver video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+
+      <div class="scard portrait" tabindex="0" role="button" aria-label="Ver video: Neutrogena TikTok" data-video="rrss/neutrogena.mp4">
+        <div class="scard-poster">
+          <p class="poster-title">Neutrogena</p>
+          <div class="poster-dots"><span></span><span></span><span></span></div>
+        </div>
+        <video muted loop playsinline preload="none">
+          <source src="rrss/neutrogena.mp4" type="video/mp4">
+        </video>
+        <div class="scard-overlay">
+          <span class="scard-tag">Neutrogena</span>
+          <p class="scard-name">Neutrogena TikTok</p>
+        </div>
+        <div class="scard-play" aria-label="Ver video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── 05 · EXPERIENCIAS DE MARCA IA ─────────────────── -->
+<section class="cat-section">
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <span class="sec-dash"></span>
+    <span class="sec-name">Experiencias de Marca <em>IA</em></span>
+    <p class="sec-desc">Activaciones digitales de marca en tiempo récord sin necesidad de programar o pagar altos costos.</p>
+  </div>
+  <div class="strip-wrap">
+    <div class="strip">
+
+      <div class="scard" tabindex="0" role="button" aria-label="Ver video: Build A Bear" data-video="experiencias/build-a-bear/build.mp4">
+        <div class="scard-poster">
+          <p class="poster-title">Build A Bear</p>
+          <div class="poster-dots"><span></span><span></span><span></span></div>
+        </div>
+        <video muted loop playsinline preload="none">
+          <source src="experiencias/build-a-bear/build.mp4" type="video/mp4">
+        </video>
+        <div class="scard-overlay">
+          <span class="scard-tag">Build A Bear</span>
+          <p class="scard-name">Build A Bear</p>
+        </div>
+        <div class="scard-play" aria-label="Ver video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+
+      <div class="scard" tabindex="0" role="button" aria-label="Ver video: Netflix" data-video="experiencias/netflix/netflix.mp4">
+        <div class="scard-poster">
+          <p class="poster-title">Netflix</p>
+          <div class="poster-dots"><span></span><span></span><span></span></div>
+        </div>
+        <video muted loop playsinline preload="none">
+          <source src="experiencias/netflix/netflix.mp4" type="video/mp4">
+        </video>
+        <div class="scard-overlay">
+          <span class="scard-tag">Netflix</span>
+          <p class="scard-name">Netflix</p>
+        </div>
+        <div class="scard-play" aria-label="Ver video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── 06 · ENTRENAMIENTO IA ──────────────────────────── -->
+<section class="cat-section">
+  <div class="sec-head">
+    <span class="sec-num">06</span>
+    <span class="sec-dash"></span>
+    <span class="sec-name">Entrenamiento <em>IA</em> para Equipos</span>
+    <p class="sec-desc">Entrena a tu equipo en herramientas IA desde básico hasta avanzado.</p>
+  </div>
+  <div class="strip-wrap">
+    <div class="strip">
+
+      <div class="scard no-video" tabindex="0" role="button" aria-label="Ver imagen: Curso de Herramientas IA"
+           data-image="entrenamiento/herramientas/herramientas.png">
+        <img src="entrenamiento/herramientas/herramientas.png"
+             alt="Curso de Herramientas IA para equipos creativos"
+             loading="lazy" decoding="async">
+        <div class="scard-overlay">
+          <span class="scard-tag">Entrenamiento · Herramientas IA</span>
+          <p class="scard-name">Curso de Herramientas IA</p>
+        </div>
+      </div>
+
+      <div class="scard no-video" tabindex="0" role="button" aria-label="Ver imagen: Curso Dirección Creativa IA"
+           data-image="entrenamiento/direccion/direccion.png">
+        <img src="entrenamiento/direccion/direccion.png"
+             alt="Curso de Dirección Creativa con IA"
+             loading="lazy" decoding="async">
+        <div class="scard-overlay">
+          <span class="scard-tag">Entrenamiento · Dirección Creativa</span>
+          <p class="scard-name">Curso Dirección Creativa IA</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── 07 · MODA IA ───────────────────────────────────── -->
+<section class="cat-section">
+  <div class="sec-head">
+    <span class="sec-num">07</span>
+    <span class="sec-dash"></span>
+    <span class="sec-name">Moda <em>IA</em></span>
+    <p class="sec-desc">Campañas de moda sin modelos, sin locación. Solo producción.</p>
+  </div>
+  <div class="strip-wrap">
+    <div class="strip">
+
+      <div class="scard no-video square" tabindex="0" role="button" aria-label="Ver imagen: Campaña editorial IA"
+           data-image="moda/ilusion/nuevas/1.png">
+        <img src="moda/ilusion/nuevas/1.png"
+             alt="Modelo con lencería azul en campaña editorial IA para Ilusión"
+             loading="lazy" decoding="async" width="1080" height="1080">
+        <div class="scard-overlay">
+          <span class="scard-tag">Ilusión · Editorial IA</span>
+          <p class="scard-name">Campaña editorial IA</p>
+        </div>
+      </div>
+
+      <div class="scard no-video square" tabindex="0" role="button" aria-label="Ver imagen: Campaña editorial IA"
+           data-image="moda/ilusion/nuevas/2.png">
+        <img src="moda/ilusion/nuevas/2.png"
+             alt="Modelo en sesión editorial generada con IA — Ilusión"
+             loading="lazy" decoding="async" width="1080" height="1080">
+        <div class="scard-overlay">
+          <span class="scard-tag">Ilusión · Editorial IA</span>
+          <p class="scard-name">Campaña editorial IA</p>
+        </div>
+      </div>
+
+      <div class="scard no-video square" tabindex="0" role="button" aria-label="Ver imagen: Campaña editorial IA"
+           data-image="moda/ilusion/nuevas/3.png">
+        <img src="moda/ilusion/nuevas/3.png"
+             alt="Modelo de perfil en campaña editorial IA — Ilusión"
+             loading="lazy" decoding="async" width="1080" height="1080">
+        <div class="scard-overlay">
+          <span class="scard-tag">Ilusión · Editorial IA</span>
+          <p class="scard-name">Campaña editorial IA</p>
+        </div>
+      </div>
+
+      <div class="scard no-video square" tabindex="0" role="button" aria-label="Ver imagen: Campaña editorial IA"
+           data-image="moda/ilusion/nuevas/4.png">
+        <img src="moda/ilusion/nuevas/4.png"
+             alt="Modelo en pose editorial IA — Ilusión"
+             loading="lazy" decoding="async" width="1080" height="1080">
+        <div class="scard-overlay">
+          <span class="scard-tag">Ilusión · Editorial IA</span>
+          <p class="scard-name">Campaña editorial IA</p>
+        </div>
+      </div>
+
+      <div class="scard no-video contain" tabindex="0" role="button" aria-label="Ver imagen: Flujo de automatización IA"
+           data-image="moda/automatizacion/workflow.png">
+        <img src="moda/automatizacion/workflow.png"
+             alt="Flujo de trabajo de automatización IA para producción de moda"
+             loading="lazy" decoding="async" width="1920" height="1080">
+        <div class="scard-overlay">
+          <span class="scard-tag">Workflow · Automatización IA</span>
+          <p class="scard-name">Flujo de producción IA</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── 08 · VIDEOS MUSICALES IA ──────────────────────── -->
+<section class="cat-section">
+  <div class="sec-head">
+    <span class="sec-num">08</span>
+    <span class="sec-dash"></span>
+    <span class="sec-name">Videos Musicales <em>IA</em></span>
+    <p class="sec-desc">Si tienes el artista y la idea, es momento de crear.</p>
+  </div>
+  <div class="strip-wrap">
+    <div class="strip">
+
+      <div class="scard" tabindex="0" role="button" aria-label="Ver video: Gorillaz" data-video="videos-musicales/gorillaz/gorillaz.mp4">
+        <div class="scard-poster">
+          <p class="poster-title">Gorillaz</p>
+          <div class="poster-dots"><span></span><span></span><span></span></div>
+        </div>
+        <video muted loop playsinline preload="none">
+          <source src="videos-musicales/gorillaz/gorillaz.mp4" type="video/mp4">
+        </video>
+        <div class="scard-overlay">
+          <span class="scard-tag">Video Musical · IA</span>
+          <p class="scard-name">Gorillaz</p>
+        </div>
+        <div class="scard-play" aria-label="Ver video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+
+      <div class="scard" tabindex="0" role="button" aria-label="Ver video: Little Pretty — Otis Stacks" data-video="videos-musicales/otis-stacks/final.mp4">
+        <div class="scard-poster">
+          <p class="poster-title">Little Pretty<br>Otis Stacks</p>
+          <div class="poster-dots"><span></span><span></span><span></span></div>
+        </div>
+        <video muted loop playsinline preload="none">
+          <source src="videos-musicales/otis-stacks/final.mp4" type="video/mp4">
+        </video>
+        <div class="scard-overlay">
+          <span class="scard-tag">Video Musical · IA</span>
+          <p class="scard-name">Little Pretty — Otis Stacks</p>
+        </div>
+        <div class="scard-play" aria-label="Ver video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="cta-left">
+    <p class="cta-eyebrow">¿Tienes un proyecto?</p>
+    <h2 class="cta-headline">
+      Hagamos algo<br><em>increíble juntos</em>
+    </h2>
+  </div>
+  <a href="https://wa.me/573105050339" target="_blank" rel="noopener" class="btn-wa">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    Escríbeme
+  </a>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────── -->
+<footer>
+  <div class="footer-left">
+    <p class="footer-name">Steven Cañaveral</p>
+    <p class="footer-role">AI Creative Director</p>
+  </div>
+  <div class="footer-social">
+    <a href="https://www.linkedin.com/in/stevencanaveral/" target="_blank" rel="noopener" aria-label="LinkedIn">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a href="https://www.behance.net/Sevenca" target="_blank" rel="noopener" aria-label="Behance">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.938 4.503c.702 0 1.34.06 1.92.188.577.13 1.07.33 1.485.61.41.28.733.65.96 1.12.225.47.34 1.05.34 1.73 0 .74-.17 1.36-.507 1.86-.338.5-.837.9-1.502 1.22.906.26 1.576.72 2.022 1.37.448.66.665 1.45.665 2.36 0 .75-.13 1.39-.41 1.93-.28.55-.67 1-1.16 1.35-.48.348-1.05.6-1.69.747-.63.148-1.29.222-1.98.222H0V4.503h6.938zm-.34 5.65c.584 0 1.07-.14 1.46-.42.388-.28.583-.73.583-1.36 0-.34-.06-.62-.18-.847-.12-.226-.29-.41-.5-.55-.21-.14-.45-.24-.73-.3-.28-.06-.57-.09-.87-.09H3.5v3.57h3.1zm.16 5.875c.338 0 .653-.03.95-.1.3-.07.56-.18.79-.34.225-.16.407-.37.54-.63.13-.26.2-.59.2-.98 0-.78-.22-1.33-.65-1.64-.432-.3-.99-.45-1.68-.45H3.5v4.14h3.258zm8.767-1.206c.43.42 1.05.63 1.87.63.58 0 1.08-.145 1.5-.44.42-.294.675-.61.766-.95h2.75c-.44 1.37-1.11 2.35-2.01 2.94-.9.59-1.99.88-3.26.88-.885 0-1.68-.14-2.386-.42-.706-.28-1.308-.67-1.805-1.18-.496-.51-.876-1.12-1.14-1.83-.264-.71-.395-1.5-.395-2.36 0-.83.135-1.6.405-2.31.27-.72.655-1.34 1.16-1.86.5-.52 1.1-.93 1.8-1.22.7-.29 1.47-.435 2.32-.435.948 0 1.77.18 2.464.54.696.36 1.27.85 1.72 1.46.45.615.775 1.31.97 2.09.197.78.276 1.6.24 2.46h-8.2c0 .92.29 1.77.72 2.19zm3.44-5.88c-.35-.38-.87-.57-1.57-.57-.46 0-.84.08-1.14.24-.3.16-.54.35-.72.58-.18.23-.306.48-.376.74-.07.26-.11.5-.12.72h4.7c-.1-.77-.42-1.33-.77-1.71zM15.585 6.17h5.248v1.26h-5.248V6.17z"/></svg>
+    </a>
+  </div>
+  <small class="footer-copy">© 2026 · Creatividad + IA</small>
+</footer>
+
+<!-- ── MODAL ──────────────────────────────────────────── -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Visor de contenido">
+  <div class="modal-inner" id="modalInner">
+    <button class="modal-close" id="modalClose" aria-label="Cerrar">✕ &nbsp;Cerrar</button>
+    <video class="modal-video" id="modalVideo" controls playsinline title="Video del portfolio"></video>
+    <img class="modal-img" id="modalImg" alt="" src="">
+  </div>
+</div>
+
+<!-- ── Scripts ──────────────────────────────────────────── -->
+<script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"
+  onerror="window._lenisErr=true"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+  onerror="window._gsapErr=true"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
+  onerror="window._stErr=true"></script>
+<script defer>
+(function checkCDN() {
+  if (typeof gsap === 'undefined' || typeof Lenis === 'undefined') {
+    document.documentElement.classList.add('gsap-failed');
+  }
+})();
+</script>
+
+<script defer>
+/* ─── HERO REEL — fondo full-screen ─────────────────── */
+const reelSrcs = [
+  'videos-musicales/gorillaz/gorillaz.mp4',
+  'videos-musicales/otis-stacks/final.mp4',
+  'ads/ilusion-ad/ilusion.mp4'
+];
+const reelVid     = document.getElementById('reel-vid');
+const reelBar     = document.getElementById('reel-bar');
+let reelIdx       = 0;
+let reelTimer     = null;
+let reelFadeTimer = null;
+let reelPaused    = false;
+const REEL_DURATION = 4000;
+
+function playReel(idx) {
+  reelVid.style.willChange = 'opacity';
+  reelVid.style.opacity = '0';
+  clearTimeout(reelTimer);
+  clearTimeout(reelFadeTimer);
+
+  reelFadeTimer = setTimeout(() => {
+    reelVid.src = reelSrcs[idx];
+    reelVid.currentTime = 0;
+    reelVid.play().catch(() => {});
+    reelVid.style.opacity = '1';
+    reelBar.style.transition = 'none';
+    reelBar.style.width = '0%';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      reelBar.style.transition = `width ${REEL_DURATION}ms linear`;
+      reelBar.style.width = '100%';
+      setTimeout(() => { reelVid.style.willChange = 'auto'; }, 400);
+    }));
+  }, 300);
+
+  reelTimer = setTimeout(() => {
+    reelIdx = (reelIdx + 1) % reelSrcs.length;
+    playReel(reelIdx);
+  }, REEL_DURATION + 300);
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    clearTimeout(reelTimer);
+    clearTimeout(reelFadeTimer);
+    reelVid.pause();
+    reelBar.style.transition = 'none';
+    reelBar.style.width = '0%';
+    reelPaused = true;
+  } else if (reelPaused) {
+    reelPaused = false;
+    playReel(reelIdx);
+  }
+});
+
+(window.requestIdleCallback || setTimeout)(function() { playReel(0); }, { timeout: 800 });
+
+
+/* ─── GSAP + LENIS ───────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  gsap.registerPlugin(ScrollTrigger);
+
+  const lenis = new Lenis({ lerp: 0.085, smoothWheel: true });
+  gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+  gsap.ticker.lagSmoothing(500, 33);
+  document.documentElement.style.scrollBehavior = 'auto';
+  window._lenis = lenis;
+
+  /* Nav scrolled class */
+  lenis.on('scroll', ({ scroll }) => {
+    document.querySelector('nav').classList.toggle('scrolled', scroll > 60);
+  });
+
+  /* Phrase section */
+  const phraseEls = document.querySelectorAll('.phrase-section .phrase-label, .phrase-section .big-phrase, .phrase-section .phrase-desc');
+  phraseEls.forEach((el, i) => {
+    gsap.fromTo(el,
+      { opacity: 0, y: 50 },
+      {
+        opacity: 1, y: 0,
+        ease: 'power2.out',
+        delay: i * 0.05,
+        scrollTrigger: {
+          trigger: el,
+          start: 'clamp(top bottom)',
+          end:   'clamp(top 50%)',
+          scrub: 0.8,
+        }
+      }
+    );
+  });
+
+  /* Section headers */
+  document.querySelectorAll('.sec-head').forEach(el => {
+    gsap.fromTo(el,
+      { opacity: 0, y: 50 },
+      {
+        opacity: 1, y: 0,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'clamp(top bottom)',
+          end:   'clamp(top 48%)',
+          scrub: 0.8,
+        }
+      }
+    );
+  });
+
+  /* CTA */
+  document.querySelectorAll('.cta-section').forEach(el => {
+    gsap.fromTo(el,
+      { opacity: 0, y: 60 },
+      {
+        opacity: 1, y: 0,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'clamp(top bottom)',
+          end:   'clamp(top 45%)',
+          scrub: 0.8,
+        }
+      }
+    );
+  });
+
+  /* Cards */
+  document.querySelectorAll('.strip').forEach(strip => {
+    const cards = strip.querySelectorAll('.scard');
+    if (!cards.length) return;
+    gsap.fromTo(cards,
+      { opacity: 0, y: 80 },
+      {
+        opacity: 1, y: 0,
+        ease: 'power2.out',
+        stagger: 0.06,
+        scrollTrigger: {
+          trigger: strip,
+          start: 'clamp(top bottom-=60px)',
+          end:   'clamp(top 35%)',
+          scrub: 0.8,
+        }
+      }
+    );
+  });
+});
+
+
+/* ─── LAZY FIRST-FRAME ───────────────────────────────── */
+let _frameLoading = 0;
+const _frameQueue  = [];
+function _frameNext() {
+  if (_frameLoading >= 2 || !_frameQueue.length) return;
+  const run = _frameQueue.shift();
+  _frameLoading++;
+  run();
+}
+
+const frameObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const card = e.target;
+    frameObs.unobserve(card);
+    const video = card.querySelector('video');
+    if (!video || video.getAttribute('preload') !== 'none') return;
+    _frameQueue.push(() => {
+      const seekTo = parseFloat(card.dataset.seek) || 0.001;
+      video.preload = 'metadata';
+      video.load();
+      const onData = () => {
+        video.removeEventListener('loadeddata', onData);
+        video.removeEventListener('error', onError);
+        video.currentTime = seekTo;
+        const onSeeked = () => {
+          video.removeEventListener('seeked', onSeeked);
+          card.classList.add('has-frame');
+          video.pause();
+          _frameLoading--;
+          _frameNext();
+        };
+        video.addEventListener('seeked', onSeeked);
+      };
+      const onError = () => {
+        video.removeEventListener('loadeddata', onData);
+        video.removeEventListener('error', onError);
+        _frameLoading--;
+        _frameNext();
+      };
+      video.addEventListener('loadeddata', onData);
+      video.addEventListener('error', onError);
+    });
+    _frameNext();
+  });
+}, { rootMargin: '50px 0px' });
+
+document.querySelectorAll('.scard').forEach(c => frameObs.observe(c));
+
+/* ─── BLINK ──────────────────────────────────────────── */
+const blinkObs = new IntersectionObserver(entries => {
+  entries.forEach(e => e.target.classList.toggle('in-view', e.isIntersecting));
+}, { rootMargin: '0px' });
+document.querySelectorAll('.scard').forEach(c => blinkObs.observe(c));
+
+
+/* ─── HOVER PLAY / PAUSE ─────────────────────────────── */
+const _playPromises = new WeakMap();
+let _hoverLoading = 0;
+
+document.querySelectorAll('.scard').forEach(card => {
+  const video  = card.querySelector('video');
+  if (!video) return;
+  const seekTo = parseFloat(card.dataset.seek) || 0;
+
+  card.addEventListener('mouseenter', () => {
+    if (video.preload === 'none' && video.readyState === 0 && _hoverLoading < 3) {
+      _hoverLoading++;
+      video.preload = 'metadata';
+      video.load();
+      video.addEventListener('loadedmetadata', () => { _hoverLoading = Math.max(0, _hoverLoading - 1); }, { once: true });
+    }
+    if (video.readyState >= 1) video.currentTime = 0;
+    const p = video.play().catch(() => {});
+    _playPromises.set(card, p);
+  });
+
+  card.addEventListener('mouseleave', () => {
+    const restore = () => {
+      video.pause();
+      video.currentTime = card.dataset.seek ? seekTo : 0;
+    };
+    const p = _playPromises.get(card);
+    if (p) { p.then(restore).catch(() => {}); _playPromises.delete(card); }
+    else { restore(); }
+  });
+});
+
+
+/* ─── MODAL ──────────────────────────────────────────── */
+const modal      = document.getElementById('modal');
+const modalVideo = document.getElementById('modalVideo');
+const modalImg   = document.getElementById('modalImg');
+const modalClose = document.getElementById('modalClose');
+let lastFocused  = null;
+
+function _getScrollbarWidth() {
+  return window.innerWidth - document.documentElement.clientWidth;
+}
+
+function openModal(card) {
+  const videoSrc = card.dataset.video;
+  const imgSrc   = card.dataset.image;
+  if (!videoSrc && !imgSrc) return;
+  const cardVideo = card.querySelector('video');
+  if (cardVideo) cardVideo.pause();
+  lastFocused = card;
+  if (videoSrc) {
+    modal.classList.remove('img-mode');
+    modalVideo.src = videoSrc;
+    modalVideo.play().catch(() => {});
+  } else {
+    modal.classList.add('img-mode');
+    modalImg.src = imgSrc;
+    modalImg.alt = card.querySelector('img')?.alt || '';
+  }
+  const sbWidth = _getScrollbarWidth();
+  if (sbWidth > 0) document.body.style.paddingRight = sbWidth + 'px';
+  document.body.style.overflow = 'hidden';
+  modal.classList.add('active');
+  modalClose.focus();
+  _trapFocusInit(modal);
+}
+
+document.querySelectorAll('.scard[data-video], .scard[data-image]').forEach(card => {
+  card.addEventListener('click', () => openModal(card));
+  card.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(card); }
+  });
+});
+
+function closeModal() {
+  modal.classList.remove('active', 'img-mode');
+  modalVideo.pause();
+  modalVideo.src = '';
+  modalImg.src   = '';
+  document.body.style.overflow = '';
+  document.body.style.paddingRight = '';
+  _trapFocusDestroy();
+  if (lastFocused) { lastFocused.focus(); lastFocused = null; }
+}
+modalClose.addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+let _trapHandler = null;
+function _trapFocusInit(container) {
+  const focusable = container.querySelectorAll(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  if (!focusable.length) return;
+  const first = focusable[0];
+  const last  = focusable[focusable.length - 1];
+  _trapHandler = (e) => {
+    if (e.key !== 'Tab') return;
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last)  { e.preventDefault(); first.focus(); }
+    }
+  };
+  container.addEventListener('keydown', _trapHandler);
+}
+function _trapFocusDestroy() {
+  if (_trapHandler) {
+    modal.removeEventListener('keydown', _trapHandler);
+    _trapHandler = null;
+  }
+}
+</script>
+</body>
+</html>
