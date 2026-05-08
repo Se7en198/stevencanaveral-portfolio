@@ -1,3 +1,7 @@
+[[edge_functions]]
+  function = "social-og"
+  path = "/"
+
 [[headers]]
   for = "/*.mp4"
   [headers.values]
