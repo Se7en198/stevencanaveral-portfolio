@@ -1031,7 +1031,8 @@ let reelIdx       = 0;
 let reelTimer     = null;
 let reelFadeTimer = null;
 let reelPaused    = false;
-const REEL_DURATION = 4000;
+let reelErrors    = 0;
+const REEL_DURATION = 6000;
 
 function playReel(idx) {
   reelVid.style.willChange = 'opacity';
@@ -1042,7 +1043,22 @@ function playReel(idx) {
   reelFadeTimer = setTimeout(() => {
     reelVid.src = reelSrcs[idx];
     reelVid.currentTime = 0;
-    reelVid.play().catch(() => {});
+
+    reelVid.onerror = () => {
+      reelErrors++;
+      clearTimeout(reelTimer);
+      // Back-off: wait longer on each consecutive error (max 30s)
+      const backoff = Math.min(5000 * reelErrors, 30000);
+      reelTimer = setTimeout(() => {
+        reelIdx = (reelIdx + 1) % reelSrcs.length;
+        playReel(reelIdx);
+      }, backoff);
+    };
+
+    reelVid.play().then(() => {
+      reelErrors = 0; // reset on success
+    }).catch(() => {});
+
     reelVid.style.opacity = '1';
     reelBar.style.transition = 'none';
     reelBar.style.width = '0%';
